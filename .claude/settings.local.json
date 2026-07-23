@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import docx\")",
+      "Bash(python3 -c \"import pptx\")",
+      "Bash(python3 -c \"import PIL; print\\(PIL.__version__\\)\")",
+      "Bash(python3 -c \"import pytesseract\")",
+      "PowerShell(python --version)",
+      "PowerShell(py --version)",
+      "PowerShell(pip --version)",
+      "Bash(npm --version)",
+      "PowerShell($ErrorActionPreference = 'Continue'; foreach \\($c in @\\('node','npm','python','magick','cwebp','tesseract'\\)\\) { $r = Get-Command $c -ErrorAction SilentlyContinue; if \\($r\\) { Write-Output \"$c FOUND: $\\($r.Source\\)\" } else { Write-Output \"$c NOT FOUND\" } })",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell(python -c \"print\\(1+1\\)\" 2>&1)",
+      "Read(//c//**)",
+      "Bash(find / -maxdepth 10 -iname \"SKILL.md\" 2>/dev/null | head -50)",
+      "Bash(pandoc --version)",
+      "PowerShell(Get-Command winget -ErrorAction SilentlyContinue)",
+      "Bash(mkdir -p tools)",
+      "Bash(curl -sL -o libwebp.zip \"https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.4.0-windows-x64.zip\")",
+      "Bash(unzip -q libwebp.zip)",
+      "Bash(./libwebp-1.4.0-windows-x64/bin/cwebp.exe -version)",
+      "Bash(unzip -q \"../../Кухня составы + фото 2025.docx\")",
+      "Bash(perl extract.pl)",
+      "Bash(unzip -q \"../../Меню бара фото и составы.pptx\")",
+      "Bash(perl -CSD -ne 'print if /бадьян/' ppt/slides/slide1.xml)"
+    ]
+  }
+}

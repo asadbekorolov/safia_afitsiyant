@@ -1,0 +1,329 @@
+{
+  "restaurant": "Safa",
+  "language_pairs": {
+    "primary": "ru",
+    "secondary": "uz"
+  },
+  "sections": [
+    {
+      "id": "mission",
+      "title_ru": "Миссия, ценности, принципы",
+      "title_uz": "Missiya, qiymatlar, prinsiplar",
+      "content": {
+        "mission_ru": "Развивая кондитерское искусство, приносим праздник в каждый дом",
+        "mission_uz": "Konfiterlik san'atini rivojlantirib, har bir uyaga bayrami olib kelamiz",
+        "motto_ru": "Искусство дарить вкус и качество Вашему дому",
+        "motto_uz": "Sizning uyangizga ta'mni va sifatni berish san'ati",
+        "values": [
+          {
+            "title_ru": "Лучший кондитерский опыт",
+            "title_uz": "Eng yaxshi konfiterlik tajribasi"
+          },
+          {
+            "title_ru": "Стремление к самозарядочу",
+            "title_uz": "O'zini rivojlantirishga intilish"
+          },
+          {
+            "title_ru": "Команднан работа",
+            "title_uz": "Jamaviy ish"
+          },
+          {
+            "title_ru": "Мыслящих предпринимателей",
+            "title_uz": "O'ylagan tadbirkorlar"
+          },
+          {
+            "title_ru": "Эффективная коммуникация",
+            "title_uz": "Samarali muloqot"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dish_serving_rules",
+      "title_ru": "Правила сервировки блюд",
+      "title_uz": "Taomlarni sifatli servis qilish qoidalari",
+      "rules": [
+        {
+          "category_ru": "Для салатов, завтраков, блинов",
+          "category_uz": "Salatlar, nonushtalar, blintchiklar uchun",
+          "description_ru": "Подаются персонально НОЖ и ВИЛКА",
+          "description_uz": "Shaxsan NOJ va VILKA bilan beriladi"
+        },
+        {
+          "category_ru": "Для сендвичей, пиццы, и вторых блюд",
+          "category_uz": "Sendvichlar, pizza va ikkinchi taomlar uchun",
+          "description_ru": "Подаются НОЖ и ВИЛКА с ДЕРЕВЯННОЙ РУКОЯТКОЙ",
+          "description_uz": "NOJ va VILKA YEMIR TUTACHAGLI bilan beriladi"
+        },
+        {
+          "category_ru": "Для pasta",
+          "category_uz": "Pasta uchun",
+          "description_ru": "Подается вилка и ложка",
+          "description_uz": "Vilka va qoshiq bilan beriladi"
+        },
+        {
+          "category_ru": "Для супа и рядом с салатом",
+          "category_uz": "Sup va salatlar bilan bir qatorda",
+          "description_ru": "Отдельно подается ложка",
+          "description_uz": "Alohida qoshiq bilan beriladi"
+        }
+      ]
+    },
+    {
+      "id": "greeting_phrases",
+      "title_ru": "Приветственные фразы",
+      "title_uz": "Salomlashish iboralari",
+      "context_ru": "При встреече с гостем",
+      "context_uz": "Mehmon bilan uchrashganda",
+      "greetings": [
+        {
+          "phrase_ru": "Хайди (...тонг, кун, тун)",
+          "phrase_uz": "Haydi (...tong, kun, tun)",
+          "translation": "Good morning/day/evening"
+        },
+        {
+          "phrase_ru": "Добро пожаловать в Safa",
+          "phrase_uz": "Safaga xush kelibsiz",
+          "translation": "Welcome to Safa"
+        },
+        {
+          "phrase_ru": "Рады видеть вас в нашем ресторане",
+          "phrase_uz": "Bizning restorandage sizi ko'rib xursandmiz",
+          "translation": "Delighted to see you in our restaurant"
+        }
+      ]
+    },
+    {
+      "id": "taking_order",
+      "title_ru": "Прием заказа",
+      "title_uz": "Buyurtmani qabul qilish",
+      "basic_phrases": [
+        {
+          "phrase_ru": "Что вам рекомендуете?",
+          "phrase_uz": "Siz nimani tavsiya qilyapsiz?"
+        },
+        {
+          "phrase_ru": "Добро пожаловать в Safa. Какое блюдо вам нравится больше всего?",
+          "phrase_uz": "Safaga xush kelibsiz. Qaysi taom sizga eng ko'p yoqadi?"
+        }
+      ],
+      "details_to_confirm": [
+        {
+          "item_ru": "Аллергия и другие особые указания",
+          "item_uz": "Allergiya va boshqa maxsus ko'rsatmalar",
+          "ru_examples": [
+            "Есть ли у вас пищевая аллергия?",
+            "Есть ли у вас какие-то пищевые ограничения?"
+          ],
+          "uz_examples": [
+            "Sizda oziq-ovqat allergiyasi bormi?",
+            "Sizda qo'shimcha talablar bormi?"
+          ]
+        }
+      ],
+      "common_questions": [
+        {
+          "category_ru": "Пищевая аллергия",
+          "category_uz": "Oziq allergiyasi",
+          "ru_phrase": "Авало, йордамингизни тахлиф қилинг: бизда ширинликлар учун, куриное мясо, яйца, рыба...",
+          "uz_phrase": "Avvalo, yordam bering: Bizda shirili taomlar, ptiса go'shti, tuxumlar, baliq..."
+        },
+        {
+          "category_ru": "Рекомендации по блюдам",
+          "category_uz": "Taomlar bo'yicha tavsiyalar",
+          "ru_phrase": "Рашинг: 'Қаси пишириқнинг?'",
+          "uz_phrase": "Pishing: 'Qasi pishiriqlaning?'"
+        }
+      ]
+    },
+    {
+      "id": "serving_protocol",
+      "title_ru": "Сервировка и подача",
+      "title_uz": "Servirovka va berilishi",
+      "stages": [
+        {
+          "stage": 1,
+          "title_ru": "При подходе гостя к столу",
+          "title_uz": "Mehmon stolga yaqinlashganda",
+          "actions": [
+            {
+              "ru": "Sotuvchi mehmonlardan buyurtmani qabul qilishi taklif etiladi, buyurtmasini taqib qilishi va ofitsiantlarning ularning bugungi sevimli taomlarini eshittira olishiga qaratiladi",
+              "uz": "Sotuvchi mehmonlardan buyurtmani qabul qilishi taklif etiladi"
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "title_ru": "Предоставление меню",
+          "title_uz": "Menyuni taqdim etish",
+          "actions": [
+            {
+              "ru": "Ofitsiant ichimliklar uchun xizmat ko'rsatadi; buyurtmasini taqib qiladi va ularning bugungi sevimli taomlarini eshittira olishi mumkin",
+              "uz": ""
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "title_ru": "Подача блюд",
+          "title_uz": "Taomlarni berilishi",
+          "actions": [
+            {
+              "ru": "Блюда подаются справа от гостя, с учетом гарнира и соусов",
+              "uz": "Taomlar mehmon o'ng tarafidan beriladi, garnir va soslar hisobiga olib"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "guest_interaction",
+      "title_ru": "Взаимодействие с гостями",
+      "title_uz": "Mehmonlar bilan o'zaro munosabat",
+      "key_principles_ru": [
+        "Mehmonni salomlash: shaxsan ko'rsatilishi kerak",
+        "Mehmon tushunchasi (patiently listen): Mehmon nima xohlayotganini yaxshi tushunish",
+        "Tomondan berilgan savollarga javob berish: Mehmonning savollariga aniqlik bilan javob berish",
+        "Xizmatni taklif qilish: Mehmon ehtiyojini oldindan bilish va unga xizmat ko'rsatish"
+      ],
+      "key_principles_uz": [
+        "Mehmonni salomlash: shaxsan ko'rsatilishi kerak",
+        "Mehmon tushunchasi: Mehmon nima xohlayotganini yaxshi tushunish",
+        "Savollarga javob berish: Mehmonning savollariga aniqlik bilan javob berish"
+      ],
+      "problems_and_solutions": {
+        "ru": [
+          {
+            "problem": "Mehmon bilgisi yetarli bo'lmasa",
+            "solution": "Men restorandada tavsiye qilinadigan menyuni taqdim qilaman"
+          },
+          {
+            "problem": "Mehmon buning uchun biroz ko'proq vaqt kerak desa",
+            "solution": "Men unga vaqt beraman va keyin qayta qaytib kelaman"
+          },
+          {
+            "problem": "Mehmon maxsus talablar bo'lsa",
+            "solution": "Menimni bugungi sevimli taomlarni eshittiramiz"
+          }
+        ],
+        "uz": [
+          {
+            "problem": "Mehmon bilgisi yetarli bo'lmasa",
+            "solution": "Tavsiyaga ko'ra menyuni taqdim qilish"
+          }
+        ]
+      }
+    },
+    {
+      "id": "quality_standards",
+      "title_ru": "Стандарты качества",
+      "title_uz": "Sifat standartlari",
+      "standards": [
+        {
+          "category_ru": "Ужчасть в процессе приготовления",
+          "category_uz": "Tayyorlanish jarayonida sifat",
+          "items": [
+            {
+              "ru": "Продукты должны быть свежими и высокого качества",
+              "uz": "Mahsulotlar sof va yuqori sifatli bo'lishi kerak"
+            },
+            {
+              "ru": "Все ингредиенты должны быть правильно отмерены",
+              "uz": "Barcha ingredientlar to'g'ri o'lchanishi kerak"
+            },
+            {
+              "ru": "Блюда готовятся в соответствии с рецептом",
+              "uz": "Taomlar receptga ko'ra tayyorlanadi"
+            }
+          ]
+        },
+        {
+          "category_ru": "Чистота и гигиена",
+          "category_uz": "Tozaliq va gigiyena",
+          "items": [
+            {
+              "ru": "Рабочие поверхности должны быть чистыми",
+              "uz": "Ish sirtlari tozа bo'lishi kerak"
+            },
+            {
+              "ru": "Посуда должна быть чистой и сияющей",
+              "uz": "Idishlar tozа va parlаq bo'lishi kerak"
+            },
+            {
+              "ru": "Персонал должен соблюдать правила личной гигиены",
+              "uz": "Xodimlar shaxsiy gigiyena qoidalarini saqlaslari kerak"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "staff_responsibilities",
+      "title_ru": "Обязанности персонала",
+      "title_uz": "Xodimlarning mas'ulliyatlari",
+      "roles": [
+        {
+          "role_ru": "Официант",
+          "role_uz": "Ofitsiant",
+          "responsibilities": [
+            {
+              "ru": "Mehmonni salomlash va ularni stolga o'tkazish",
+              "uz": "Mehmonni salomlash va ularni stolga o'tkazish"
+            },
+            {
+              "ru": "Menyuni taqdim qilish va savollarga javob berish",
+              "uz": "Menyuni taqdim qilish va savollarga javob berish"
+            },
+            {
+              "ru": "Buyurtmani to'g'ri qayd qilish va rassam uchun taqdim qilish",
+              "uz": "Buyurtmani to'g'ri qayd qilish va rassam uchun taqdim qilish"
+            },
+            {
+              "ru": "Taomlarni to'g'ri berilishi va servis standartlarini saqlanish",
+              "uz": "Taomlarni to'g'ri berilishi va servis standartlarini saqlanish"
+            }
+          ]
+        },
+        {
+          "role_ru": "Повар",
+          "role_uz": "Pishiruvchi",
+          "responsibilities": [
+            {
+              "ru": "Taomlarni yuqori sifatda tayyorlash",
+              "uz": "Taomlarni yuqori sifatda tayyorlash"
+            },
+            {
+              "ru": "Receptga ko'ra tayyorlash va servis standartlarini saqlanish",
+              "uz": "Receptga ko'ra tayyorlash va servis standartlarini saqlanish"
+            },
+            {
+              "ru": "Allergen bilan bog'liq ehtiyotliklar to'g'ri joylashtirish",
+              "uz": "Allergen bilan bog'liq ehtiyotliklar to'g'ri joylashtirish"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "allergen_information": {
+    "description_ru": "Vykharnya informatsiya ob allergenah dostupna pri zaprose",
+    "description_uz": "Allergen haqidagi to'liq ma'lumot so'rash asosida mavjud",
+    "common_allergens": [
+      "молочные продукты | Sutsli mahsulotlar",
+      "глютен | Gluten",
+      "лесные орехи | O'rmon yengil qabiqli mevalari",
+      "древесные орехи | Daraxt yengil qabiqli mevalari",
+      "какао | Kakao",
+      "яйца | Tuxumlar",
+      "рыба | Baliq",
+      "мясо | Go'sht",
+      "птица | Ptiса",
+      "кунжут | Kung'ut"
+    ]
+  },
+  "image_references": {
+    "serving_rules_image": "assets/images/standards/standard-001.jpg",
+    "mission_values_image": "assets/images/standards/standard-002.jpg",
+    "protocols_image": "assets/images/standards/standard-003.jpg"
+  }
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4A2E2B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Safia — Restaurant & Bar App</title>
+  
+  <!-- PWA Manifest Link -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <div id="app-root">
+
+    <!-- HEADER SECTION -->
+    <header class="app-header">
+      <a href="index.html" class="header-brand">
+        <div class="brand-logo">S</div>
+        <div class="brand-title">
+          <h1>Safia</h1>
+          <span>Standartlar & Menyu</span>
+        </div>
+      </a>
+
+      <!-- Admin Button Requirement (min 44x44px touch target) -->
+      <a href="admin.html" class="btn-admin" title="Admin Sozlamalar">
+        <span>⚙️</span>
+        <span>Admin</span>
+      </a>
+    </header>
+
+    <!-- MAIN VIEWPORT CONTAINER (SPA SECTIONS) -->
+    <main class="app-content">
+
+      <!-- 1. OSHXONA VIEW (KITCHEN DISHES) -->
+      <section id="view-kitchen" class="view-section active"></section>
+
+      <!-- 2. BAR VIEW (DRINKS) -->
+      <section id="view-bar" class="view-section"></section>
+
+      <!-- 3. STANDARTLAR VIEW (SERVICE STANDARDS) -->
+      <section id="view-standards" class="view-section"></section>
+
+      <!-- 4. KARTOCHKALAR VIEW (FLASHCARDS) -->
+      <section id="view-cards" class="view-section"></section>
+
+      <!-- 5. TEST VIEW (QUIZ) -->
+      <section id="view-test" class="view-section"></section>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR (5 MAIN TABS) -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="kitchen" aria-label="Oshxona">
+        <span class="nav-icon">🍽</span>
+        <span class="nav-label">Oshxona</span>
+      </button>
+
+      <button class="nav-item" data-tab="bar" aria-label="Bar">
+        <span class="nav-icon">☕️</span>
+        <span class="nav-label">Bar</span>
+      </button>
+
+      <button class="nav-item" data-tab="standards" aria-label="Standartlar">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Standartlar</span>
+      </button>
+
+      <button class="nav-item" data-tab="cards" aria-label="Kartochkalar">
+        <span class="nav-icon">🎴</span>
+        <span class="nav-label">Kartochkalar</span>
+      </button>
+
+      <button class="nav-item" data-tab="test" aria-label="Test">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Test</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker Registered:', reg.scope))
+          .catch(err => console.warn('Service Worker Registration Failed:', err));
+      });
+    }
+  </script>
+
+  <!-- JavaScript Application Logic Modules -->
+  <script src="js/storage.js"></script>
+  <script src="js/data-loader.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/standards.js"></script>
+  <script src="js/flashcards.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

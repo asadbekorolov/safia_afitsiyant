@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4A2E2B">
+  <title>Safia — Admin Menyu Boshqaruvi</title>
+  
+  <!-- PWA Manifest Link -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <div id="app-root">
+
+    <!-- HEADER SECTION -->
+    <header class="app-header">
+      <a href="index.html" class="btn-admin" title="Bosh sahifaga qaytish">
+        <span>⬅️</span>
+        <span>Bosh sahifa</span>
+      </a>
+      <div class="brand-title" style="text-align: right;">
+        <h1 style="color: white;">⚙️ Admin Editor</h1>
+        <span>Menyu va Narxlar Tahrirchisi</span>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="app-content">
+      <div id="admin-editor-container">
+        <div class="text-center" style="padding: 40px;">Menyu ma'lumotlari yuklanmoqda...</div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker Registered:', reg.scope))
+          .catch(err => console.warn('Service Worker Registration Failed:', err));
+      });
+    }
+  </script>
+
+  <!-- JavaScript Modules -->
+  <script src="js/data-loader.js"></script>
+  <script src="js/admin.js"></script>
+
+</body>
+</html>
