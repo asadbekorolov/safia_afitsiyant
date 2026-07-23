@@ -1,6 +1,7 @@
 /**
  * SAFIA MOBILE SPA APPLICATION LOGIC
- * Integrates DataLoader, MenuManager, StandardsManager, StorageManager, FlashcardManager, and QuizManager.
+ * Integrates DataLoader, MenuManager, StandardsManager, StorageManager,
+ * FlashcardManager, QuizManager, and i18n multi-language support.
  */
 
 // STATE MANAGEMENT
@@ -16,7 +17,8 @@ const AppState = {
 // INITIALIZATION
 document.addEventListener('DOMContentLoaded', async () => {
   initRouter();
-  
+  initI18n();
+
   // Load data via DataLoader
   const data = await DataLoader.loadAll();
   AppState.dishes = data.dishes;
@@ -25,6 +27,45 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderActiveView();
 });
+
+// MULTI-LANGUAGE LISTENER
+function initI18n() {
+  const langSelect = document.getElementById('lang-select');
+  if (langSelect) {
+    langSelect.value = I18n.getLang();
+  }
+
+  document.addEventListener('safia_lang_changed', (e) => {
+    updateUiLanguage();
+    renderActiveView();
+  });
+
+  updateUiLanguage();
+}
+
+function updateUiLanguage() {
+  const sub = document.getElementById('txt-brand-sub');
+  if (sub) sub.innerText = I18n.t('brandSub');
+
+  const adminBtn = document.getElementById('txt-admin-btn');
+  if (adminBtn) adminBtn.innerText = I18n.t('adminBtn');
+
+  // Update nav labels
+  const tabK = document.getElementById('tab-label-kitchen');
+  if (tabK) tabK.innerText = I18n.t('tabKitchen');
+
+  const tabB = document.getElementById('tab-label-bar');
+  if (tabB) tabB.innerText = I18n.t('tabBar');
+
+  const tabS = document.getElementById('tab-label-standards');
+  if (tabS) tabS.innerText = I18n.t('tabStandards');
+
+  const tabC = document.getElementById('tab-label-cards');
+  if (tabC) tabC.innerText = I18n.t('tabCards');
+
+  const tabT = document.getElementById('tab-label-test');
+  if (tabT) tabT.innerText = I18n.t('tabTest');
+}
 
 // SPA ROUTER LOGIC
 function initRouter() {
@@ -61,10 +102,7 @@ function switchTab(tabId) {
     }
   });
 
-  // Scroll to top on tab switch
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Render view content
   renderActiveView();
 }
 

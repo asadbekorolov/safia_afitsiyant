@@ -1,7 +1,7 @@
 /**
  * SAFIA FLASHCARDS GAMIFIED TRAINER MODULE
  * Features 3D card flip animation, 2 modes (Oshxona & Bar),
- * progress tracking via StorageManager, and completion screens.
+ * progress tracking via StorageManager, and i18n support.
  */
 
 const FlashcardManager = (function() {
@@ -14,17 +14,15 @@ const FlashcardManager = (function() {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Load items based on currentMode
     const rawItems = currentMode === 'kitchen' ? DataLoader.getDishes() : DataLoader.getDrinks();
     
-    // Attach type prefix
     activeDeck = rawItems.map(item => ({
       ...item,
       itemKey: `${currentMode === 'kitchen' ? 'dishes' : 'drinks'}-${item.id}`
     }));
 
     if (activeDeck.length === 0) {
-      container.innerHTML = '<div class="empty-menu-state">Kartochkalar mavjud emas</div>';
+      container.innerHTML = `<div class="empty-menu-state">${I18n.t('emptyStateTitle')}</div>`;
       return;
     }
 
@@ -36,7 +34,6 @@ const FlashcardManager = (function() {
     const learnedCount = activeDeck.filter(item => StorageManager.isLearned(item.itemKey)).length;
     const percent = totalItems > 0 ? Math.round((learnedCount / totalItems) * 100) : 0;
 
-    // Check if 100% completed
     const unlearnedDeck = activeDeck.filter(item => !StorageManager.isLearned(item.itemKey));
 
     if (unlearnedDeck.length === 0 && totalItems > 0) {
@@ -44,7 +41,6 @@ const FlashcardManager = (function() {
       return;
     }
 
-    // Ensure currentIndex is within unlearnedDeck bounds
     const currentItem = unlearnedDeck[currentIndex % unlearnedDeck.length];
 
     let html = `
@@ -54,18 +50,18 @@ const FlashcardManager = (function() {
         <div class="category-chips-scroll" style="justify-content: center; margin-bottom: 14px;">
           <button class="chip-btn ${currentMode === 'kitchen' ? 'active' : ''}"
                   onclick="FlashcardManager.switchMode('kitchen')">
-            🍽 Oshxona (Rasm → Nom & Tarkib)
+            🍽 ${I18n.t('tabKitchen')} (Rasm → Nom & Tarkib)
           </button>
           <button class="chip-btn ${currentMode === 'bar' ? 'active' : ''}"
                   onclick="FlashcardManager.switchMode('bar')">
-            ☕️ Bar (Nom → Tarkib & Servirovka)
+            ☕️ ${I18n.t('tabBar')} (Nom → Tarkib & Servirovka)
           </button>
         </div>
 
         <!-- PROGRESS BAR HEADER -->
         <div class="card-progress-header" style="margin-bottom: 16px;">
           <div class="progress-info">
-            <span>O'rganish jarayoni: <strong>${learnedCount} / ${totalItems}</strong></span>
+            <span>O'rganish: <strong>${learnedCount} / ${totalItems}</strong></span>
             <span>${percent}%</span>
           </div>
           <div class="progress-bg">
@@ -83,10 +79,10 @@ const FlashcardManager = (function() {
         <!-- ACTION BUTTONS -->
         <div class="flashcard-controls">
           <button class="btn-card-action btn-learn" onclick="FlashcardManager.markCurrentCard(false)">
-            ❌ Qaytarish
+            ${I18n.t('btnLearn')}
           </button>
           <button class="btn-card-action btn-know" onclick="FlashcardManager.markCurrentCard(true)">
-            ✅ Bilaman
+            ${I18n.t('btnKnow')}
           </button>
         </div>
 
@@ -96,7 +92,6 @@ const FlashcardManager = (function() {
     container.innerHTML = html;
   }
 
-  // REJIM 1: OSHXONA (FRONT: IMAGE | BACK: NAME & INGREDIENTS)
   function renderKitchenCardFace(item) {
     const formattedPrice = item.price_uah ? `${item.price_uah.toLocaleString('ru-RU')} so'm` : '';
 
@@ -109,7 +104,7 @@ const FlashcardManager = (function() {
         <img src="${item.image}" alt="${escapeHtml(item.name_ru)}" class="flashcard-img"
              onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'180\' height=\'180\'><rect width=\'100%\' height=\'100%\' fill=\'%23fee2e2\'/><text x=\'50%\' y=\'50%\' font-size=\'16\' text-anchor=\'middle\' fill=\'%23dc2626\'>No Image</text></svg>'">
         <div style="font-size: 13px; color: var(--color-text-muted); margin-top: 4px;">
-          Nomi va tarkibini ko'rish uchun bosing 👆
+          ${I18n.t('flashcardSub')}
         </div>
       </div>
 
@@ -121,7 +116,7 @@ const FlashcardManager = (function() {
         </div>
         <h3 style="font-size: 17px; color: var(--color-primary); margin-bottom: 8px;">${escapeHtml(item.name_ru)}</h3>
         <div style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px;">
-          <strong>Tarkibi:</strong> ${escapeHtml(item.ingredients_ru)}
+          <strong>${I18n.t('ingredientsLabel')}:</strong> ${escapeHtml(item.ingredients_ru)}
         </div>
         ${item.allergens && item.allergens.length ? `
           <div style="font-size: 11.5px; color: var(--color-danger); margin-top: auto;">
@@ -132,26 +127,25 @@ const FlashcardManager = (function() {
     `;
   }
 
-  // REJIM 2: BAR (FRONT: NAME & GROUP | BACK: INGREDIENTS & SERVIROVKA)
   function renderBarCardFace(item) {
     return `
       <!-- FRONT FACE -->
-      <div class="flashcard-face flashcard-front" style="justify-content: center; background: #FFFDF9;">
+      <div class="flashcard-face flashcard-front" style="justify-content: center;">
         <span class="badge badge-cat" style="margin-bottom: 12px;">${escapeHtml(item.group || 'Bar')}</span>
         <h3 style="font-size: 20px; color: var(--color-primary); margin-bottom: 8px;">${escapeHtml(item.name_ru)}</h3>
         <p style="font-size: 12px; color: var(--color-text-muted);">
-          Tarkib va servirovka qoidasini ko'rish uchun bosing 👆
+          ${I18n.t('flashcardSub')}
         </p>
       </div>
 
       <!-- BACK FACE -->
       <div class="flashcard-face flashcard-back">
-        <h4 style="color: var(--color-primary); margin-bottom: 4px;">Tarkibi:</h4>
+        <h4 style="color: var(--color-primary); margin-bottom: 4px;">${I18n.t('ingredientsLabel')}:</h4>
         <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 10px;">${escapeHtml(item.ingredients_ru)}</p>
         
         ${item.serving_ru ? `
           <div class="serving-block" style="width: 100%; margin-bottom: 8px;">
-            <div class="serving-title">☕️ Servirovka va podacha:</div>
+            <div class="serving-title">☕️ ${I18n.t('servingLabel')}:</div>
             <div class="serving-desc">${escapeHtml(item.serving_ru)}</div>
           </div>
         ` : ''}
@@ -159,17 +153,16 @@ const FlashcardManager = (function() {
     `;
   }
 
-  // RENDER CELEBRATION SCREEN
   function renderCompletionScreen(container, totalItems) {
     container.innerHTML = `
       <div class="quiz-container text-center" style="padding: 40px 20px;">
         <div style="font-size: 54px; margin-bottom: 10px;">🎉</div>
-        <h2 style="color: var(--color-primary); margin-bottom: 8px;">Barcha kartochkalarni o'rgandingiz!</h2>
+        <h2 style="color: var(--color-primary); margin-bottom: 8px;">${I18n.t('flashcardDoneTitle')}</h2>
         <p style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 20px;">
-          Siz ${currentMode === 'kitchen' ? 'Oshxona' : 'Bar'} bo'limidagi barcha <strong>${totalItems} ta</strong> kartochkani muvaffaqiyatli o'zlashtirdingiz.
+          Siz barcha <strong>${totalItems} ta</strong> kartochkani o'zlashtirdingiz.
         </p>
         <button class="btn-card-action btn-know" onclick="FlashcardManager.resetCurrentMode()">
-          🔄 Qayta boshlash
+          ${I18n.t('btnRestart')}
         </button>
       </div>
     `;

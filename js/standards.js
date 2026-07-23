@@ -1,30 +1,29 @@
 /**
  * SAFIA SERVICE STANDARDS MODULE
  * Renders interactive accordion panels, allergen guidance, forbidden actions,
- * complaint handling, cutlery rules, and real-time standards search.
+ * complaint handling, cutlery rules, real-time standards search, and i18n support.
  */
 
 const StandardsManager = (function() {
   let searchKeyword = '';
   let openAccordionIds = new Set(['mission', 'serving_rules', 'guest_interaction', 'forbidden']);
 
-  // FORBIDDEN ACTIONS DATA (STOP / RED BLOCKS)
   const FORBIDDEN_ACTIONS = [
     {
-      title: "Mehmon bilan tortishish yoki e'tiroz bildirish 🛑",
-      desc: "Har qanday vaziyatda mehmon haq. Shikoyat kelganda tortishmasdan tinglash va zudlik bilan hal etish shart."
+      title: { uz: "Mehmon bilan tortishish yoki e'tiroz bildirish 🛑", ru: "Спорить с гостем или возражать 🛑", en: "Arguing or disputing with a guest 🛑" },
+      desc: { uz: "Har qanday vaziyatda mehmon haq. Shikoyat kelganda tortishmasdan tinglash va zudlik bilan yechim taklif etish shart.", ru: "Гость всегда прав. При жалобе выслушайте без споров и предложите решение.", en: "The guest is always right. Listen patiently without arguing and offer an immediate solution." }
     },
     {
-      title: "Allergiya bor-yo'qligini so'ramasdan taom tavsiya qilish 🛑",
-      desc: "Mehmon xavfsizligi birinchi o'rinda. Allergenlar haqida so'ramasdan taom berish qat'iyan man etiladi."
+      title: { uz: "Allergiya bor-yo'qligini so'ramasdan taom tavsiya qilish 🛑", ru: "Рекомендовать блюда не спросив про аллергию 🛑", en: "Recommending food without checking for allergies 🛑" },
+      desc: { uz: "Mehmon xavfsizligi birinchi o'rinda. Allergenlar haqida so'ramasdan taom berish qat'iyan man etiladi.", ru: "Безопасность гостя превыше всего. Всегда уточняйте наличие аллергии.", en: "Guest safety is top priority. Always check for food allergies before recommending." }
     },
     {
-      title: "Kir, tirnalgan yoki shikastlangan idishlarda taom tortish 🛑",
-      desc: "Barcha idish va pichoq-vilkalar sirli, toza va parlashi shart."
+      title: { uz: "Kir, tirnalgan yoki shikastlangan idishlarda taom tortish 🛑", ru: "Подавать блюда в грязной или поврежденной посуде 🛑", en: "Serving food in dirty or damaged tableware 🛑" },
+      desc: { uz: "Barcha idish va pichoq-vilkalar sirli, toza va parlashi shart.", ru: "Вся посуда и приборы должны быть безупречно чистыми и сияющими.", en: "All dishes and cutlery must be sparkling clean and undamaged." }
     },
     {
-      title: "Ish vaqtida shaxsiy telefondan foydalanish yoki e'tiborsizlik 🛑",
-      desc: "Mehmon kelganda 3 soniya ichida salomlashish va diqqatni mehmonga qaratish shart."
+      title: { uz: "Ish vaqtida shaxsiy telefondan foydalanish 🛑", ru: "Использовать личный телефон во время работы 🛑", en: "Using personal mobile phones during service 🛑" },
+      desc: { uz: "Mehmon kelganda 3 soniya ichida salomlashish va diqqatni mehmonga qaratish shart.", ru: "Приветствуйте гостя в течение 3 секунд.", en: "Greet guests within 3 seconds and stay attentive." }
     }
   ];
 
@@ -34,7 +33,7 @@ const StandardsManager = (function() {
 
     const std = DataLoader.getStandards();
     if (!std) {
-      container.innerHTML = '<div class="empty-menu-state">Standartlar maʼlumoti yuklanmadi</div>';
+      container.innerHTML = `<div class="empty-menu-state">${I18n.t('emptyStateTitle')}</div>`;
       return;
     }
 
@@ -45,34 +44,19 @@ const StandardsManager = (function() {
         <div class="search-input-group" style="margin-bottom: 16px;">
           <span class="search-icon">🔍</span>
           <input type="text" id="standards-search-input"
-                 placeholder="Standartlar bo'yicha qidirish (masalan: 'pichoq', 'shikoyat', 'allergiya')..."
+                 placeholder="${I18n.t('searchStandardsPlaceholder')}"
                  value="${escapeHtml(searchKeyword)}"
                  oninput="StandardsManager.handleSearch(this.value)">
         </div>
 
         <div class="accordion-group">
-
-          <!-- 1. MISSION & VALUES -->
           ${renderAccordionItem('mission', '🌟 Missiya, Qadriyatlar va Prinsiplar', renderMissionContent(std))}
-
-          <!-- 2. SERVING RULES (PICHOQ, VILKA, QOSHIQ) -->
           ${renderAccordionItem('serving_rules', '🍽 Idishlar va Asboblarni Tortish Qoidalari', renderServingRulesContent(std))}
-
-          <!-- 3. GREETINGS & SERVICE STAGES -->
           ${renderAccordionItem('greetings', '🤝 Servisning 5 Bosqichi va Salomlashish Iboralari', renderGreetingsContent(std))}
-
-          <!-- 4. TAKING ORDER & 12 STEPS -->
           ${renderAccordionItem('taking_order', '📋 Buyurtma Qabul Qilish va Raqamlash Tizimi', renderTakingOrderContent(std))}
-
-          <!-- 5. ALLERGIES & 7 ALLERGENS -->
           ${renderAccordionItem('allergies', '⚠️ Allergiya va 7 Allergen Standarti', renderAllergiesContent(std))}
-
-          <!-- 6. COMPLAINTS & TYPICAL SITUATIONS -->
           ${renderAccordionItem('guest_interaction', '🤬 Shikoyatlar Bilan Ishlash va Tipik Vaziyatlar', renderComplaintsContent(std))}
-
-          <!-- 7. FORBIDDEN ACTIONS (STOP RED BLOCKS) -->
           ${renderAccordionItem('forbidden', '🚫 TAQIQLANGAN Xatti-harakatlar (STOP Bloklar)', renderForbiddenContent())}
-
         </div>
       </div>
     `;
@@ -98,7 +82,6 @@ const StandardsManager = (function() {
     `;
   }
 
-  // CONTENT RENDERERS
   function renderMissionContent(std) {
     const sec = (std.sections || []).find(s => s.id === 'mission');
     if (!sec || !sec.content) return '';
@@ -124,9 +107,6 @@ const StandardsManager = (function() {
     if (!sec || !sec.rules) return '';
 
     return `
-      <p style="font-size: 13px; margin-bottom: 10px; color: var(--color-text-secondary);">
-        Taomlar turi bo'yicha asbob-uskunalarni (pichoq, vilka, qoshiq) to'g'ri taqdim etish qoidalari:
-      </p>
       <div class="table-responsive">
         <table class="std-table">
           <thead>
@@ -155,7 +135,6 @@ const StandardsManager = (function() {
     const greetings = sec ? sec.greetings : [];
 
     return `
-      <h4 style="color: var(--color-primary); margin-bottom: 8px;">Salomlashish Iboralari:</h4>
       <div class="greetings-grid" style="display: flex; flex-direction: column; gap: 8px;">
         ${greetings.map(g => `
           <div class="alert-box alert-recommended">
@@ -172,7 +151,6 @@ const StandardsManager = (function() {
     if (!sec) return '';
 
     return `
-      <h4 style="color: var(--color-primary); margin-bottom: 8px;">Buyurtma olish tavsiyalari:</h4>
       <ul class="std-list" style="margin-bottom: 12px;">
         ${(sec.basic_phrases || []).map(b => `
           <li><strong>${escapeHtml(b.phrase_uz || b.phrase_ru)}</strong></li>
@@ -190,7 +168,6 @@ const StandardsManager = (function() {
         <strong>⚠️ ALLERGEN OGOHLANTIRIShI:</strong>
         <p style="font-size: 12.5px; margin-top: 4px;">${escapeHtml(alg.description_uz || alg.description_ru)}</p>
       </div>
-      <h4 style="color: var(--color-primary); margin-bottom: 8px;">Asosiy 7 Allergen Ro'yxati:</h4>
       <div class="pills-group" style="margin-top: 6px;">
         ${(alg.common_allergens || []).map(a => `<span class="pill pill-allergen" style="font-size: 12px; padding: 4px 10px;">⚠️ ${escapeHtml(a)}</span>`).join('')}
       </div>
@@ -206,10 +183,7 @@ const StandardsManager = (function() {
     return `
       <div class="alert-box alert-recommended" style="margin-bottom: 12px;">
         <strong>1-QADAM: TINGLASH VA TUSHUNISH 🤝</strong>
-        <p style="font-size: 12.5px; margin-top: 4px;">Mehmon shikoyat qilganda e'tiroz bildirmang. Sabr bilan tinglang va zudlik bilan yechim taklif eting.</p>
       </div>
-
-      <h4 style="color: var(--color-primary); margin-bottom: 8px;">Tipik Vaziyatlar va Tayyor Javoblar:</h4>
       <div style="display: flex; flex-direction: column; gap: 8px;">
         ${psList.map(ps => `
           <div style="background: var(--color-bg); border-left: 4px solid var(--color-primary); padding: 10px; border-radius: 6px;">
@@ -222,12 +196,13 @@ const StandardsManager = (function() {
   }
 
   function renderForbiddenContent() {
+    const lang = I18n.getLang();
     return `
       <div style="display: flex; flex-direction: column; gap: 10px;">
         ${FORBIDDEN_ACTIONS.map(item => `
           <div class="alert-box alert-forbidden">
-            <h4 style="color: var(--color-danger); font-size: 14px; margin-bottom: 4px;">${escapeHtml(item.title)}</h4>
-            <p style="font-size: 12.5px; color: #7f1d1d;">${escapeHtml(item.desc)}</p>
+            <h4 style="color: var(--color-danger); font-size: 14px; margin-bottom: 4px;">${escapeHtml(item.title[lang] || item.title.uz)}</h4>
+            <p style="font-size: 12.5px; color: var(--color-danger);">${escapeHtml(item.desc[lang] || item.desc.uz)}</p>
           </div>
         `).join('')}
       </div>

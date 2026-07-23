@@ -1,56 +1,53 @@
 /**
  * SAFIA MENU MANAGER MODULE
  * Handles category chips, real-time search, allergen filtering,
- * card rendering with lazy-loading, serving_ru display, and empty states.
+ * card rendering with lazy-loading, serving_ru display, empty states, and i18n.
  */
 
 const MenuManager = (function() {
 
-  // ALLERGEN DEFINITIONS & KEYWORD MATCHERS
   const ALLERGEN_DEFINITIONS = [
     {
       id: 'yongoq',
-      label: "🥜 Yong'oq",
+      label: { uz: "🥜 Yong'oq", ru: "🥜 Орехи", en: "🥜 Nuts" },
       keywords: ['орех', 'фундук', 'кедровый', 'нутелла', 'лесные орехи', 'древесные орехи']
     },
     {
       id: 'sitrus',
-      label: '🍋 Sitrus',
+      label: { uz: "🍋 Sitrus", ru: "🍋 Цитрус", en: "🍋 Citrus" },
       keywords: ['лимон', 'лайм', 'апельсин', 'цедра', 'цитрус']
     },
     {
       id: 'tuxum',
-      label: '🥚 Tuxum',
+      label: { uz: "🥚 Tuxum", ru: "🥚 Яйца", en: "🥚 Egg" },
       keywords: ['яйц', 'яйцо', 'яйца', 'желток', 'перепелин']
     },
     {
       id: 'qizil_mevalar',
-      label: '🍓 Qizil mevalar',
+      label: { uz: "🍓 Qizil mevalar", ru: "🍓 Ягоды", en: "🍓 Berries" },
       keywords: ['малин', 'ежевик', 'голубик', 'ягод', 'черниц', 'персик']
     },
     {
       id: 'asal',
-      label: '🍯 Asal',
+      label: { uz: "🍯 Asal", ru: "🍯 Мёд", en: "🍯 Honey" },
       keywords: ['мёд', 'мед']
     },
     {
       id: 'shokolad',
-      label: '🍫 Shokolad',
+      label: { uz: "🍫 Shokolad", ru: "🍫 Шоколад", en: "🍫 Chocolate" },
       keywords: ['какао', 'шоколад', 'нутелла', 'топпинг']
     },
     {
       id: 'sut',
-      label: '🥛 Sut',
+      label: { uz: "🥛 Sut", ru: "🥛 Молоко", en: "🥛 Dairy" },
       keywords: ['молок', 'сливок', 'сливки', 'сметан', 'сыр', 'лабне', 'фетакса', 'виола', 'сгущ']
     }
   ];
 
-  // STATE FOR CURRENT VIEW
   let selectedCategory = '';
   let activeAllergens = new Set();
   let currentSearchQuery = '';
 
-  // CHECK IF ITEM CONTAINS GIVEN ALLERGEN ID
   function itemContainsAllergen(item, allergenId) {
     const def = ALLERGEN_DEFINITIONS.find(a => a.id === allergenId);
     if (!def) return false;
@@ -66,22 +63,21 @@ const MenuManager = (function() {
     );
   }
 
-  // RENDER MENU CONTROLS (CATEGORY CHIPS + SEARCH + ALLERGENS)
   function renderMenuHeader(containerId, items, type) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Extract categories
     const categories = [...new Set(items.map(i => i.category || i.group))].filter(Boolean);
+    const lang = I18n.getLang();
 
     let html = `
       <div class="menu-controls-wrapper">
         
-        <!-- SEARCH BAR (Real-time by Name & Ingredients) -->
+        <!-- SEARCH BAR -->
         <div class="search-input-group">
           <span class="search-icon">🔍</span>
           <input type="text" id="${type}-search-input"
-                 placeholder="Nomi yoki ingredient bo'yicha qidirish (masalan: 'яйца', 'мята')..."
+                 placeholder="${type === 'dishes' ? I18n.t('searchKitchenPlaceholder') : I18n.t('searchBarPlaceholder')}"
                  value="${escapeHtml(currentSearchQuery)}"
                  oninput="MenuManager.handleSearchInput('${type}', this.value)">
         </div>
@@ -90,7 +86,7 @@ const MenuManager = (function() {
         <div class="category-chips-scroll">
           <button class="chip-btn ${selectedCategory === '' ? 'active' : ''}"
                   onclick="MenuManager.selectCategory('${type}', '')">
-            ✨ Barchasi
+            ✨ ${type === 'dishes' ? I18n.t('allCategories') : I18n.t('allGroups')}
           </button>
           ${categories.map(cat => `
             <button class="chip-btn ${selectedCategory === cat ? 'active' : ''}"
@@ -103,16 +99,17 @@ const MenuManager = (function() {
         <!-- ALLERGEN FILTERS ROW -->
         <div class="allergen-filter-section">
           <div class="allergen-filter-title">
-            <span>⚠️ Allergen filtri:</span>
-            <small style="color: var(--color-text-muted);">Tarkibida borlarini yashirish</small>
+            <span>${I18n.t('allergenFilterTitle')}</span>
+            <small style="color: var(--color-text-muted);">${I18n.t('allergenFilterSub')}</small>
           </div>
           <div class="allergen-chips-wrap">
             ${ALLERGEN_DEFINITIONS.map(alg => {
               const isActive = activeAllergens.has(alg.id);
+              const chipLabel = alg.label[lang] || alg.label.uz;
               return `
                 <button class="allergen-chip ${isActive ? 'active' : ''}"
                         onclick="MenuManager.toggleAllergen('${type}', '${alg.id}')">
-                  ${alg.label}
+                  ${chipLabel}
                 </button>
               `;
             }).join('')}
@@ -129,7 +126,6 @@ const MenuManager = (function() {
     renderFilteredList(type, items);
   }
 
-  // FILTER & RENDER ITEMS
   function renderFilteredList(type, items) {
     const container = document.getElementById(`${type}-cards-container`);
     if (!container) return;
@@ -137,13 +133,11 @@ const MenuManager = (function() {
     const query = currentSearchQuery.toLowerCase().trim();
 
     const filtered = items.filter(item => {
-      // 1. Category filter
       const itemCat = item.category || item.group || '';
       if (selectedCategory && itemCat !== selectedCategory) {
         return false;
       }
 
-      // 2. Search query filter (Name AND Ingredients)
       if (query) {
         const nameMatch = (item.name_ru || '').toLowerCase().includes(query);
         const ingMatch = (item.ingredients_ru || '').toLowerCase().includes(query);
@@ -153,7 +147,6 @@ const MenuManager = (function() {
         }
       }
 
-      // 3. Allergen filter (Hide items containing any selected allergen)
       for (let allergenId of activeAllergens) {
         if (itemContainsAllergen(item, allergenId)) {
           return false;
@@ -163,15 +156,14 @@ const MenuManager = (function() {
       return true;
     });
 
-    // EMPTY STATE HANDLING
     if (filtered.length === 0) {
       container.innerHTML = `
         <div class="empty-menu-state">
           <div class="empty-icon">⚠️</div>
-          <h3>Mos taom yoki ichimlik topilmadi</h3>
-          <p>Qidiruv so'zini o'zgartiring yoki filtrlarni tozalang</p>
+          <h3>${I18n.t('emptyStateTitle')}</h3>
+          <p>${I18n.t('emptyStateSub')}</p>
           <button class="btn-reset-filters" onclick="MenuManager.resetAllFilters('${type}')">
-            🔄 Filtrlarni tozalash
+            ${I18n.t('btnResetFilters')}
           </button>
         </div>
       `;
@@ -181,7 +173,6 @@ const MenuManager = (function() {
     container.innerHTML = filtered.map(item => renderMenuItemCard(item, type)).join('');
   }
 
-  // RENDER INDIVIDUAL MENU ITEM CARD
   function renderMenuItemCard(item, type) {
     const itemKey = `${type}-${item.id}`;
     const isConfirmed = !!AppState.confirmedMap[itemKey];
@@ -213,18 +204,16 @@ const MenuManager = (function() {
           <div class="card-title">${escapeHtml(item.name_ru)}</div>
           
           <div class="card-text">
-            <strong>Tarkibi:</strong> ${escapeHtml(item.ingredients_ru || 'Maʼlumot yoʻq')}
+            <strong>${I18n.t('ingredientsLabel')}:</strong> ${escapeHtml(item.ingredients_ru || '')}
           </div>
 
-          <!-- DISTINCTIVE SERVING BLOCK FOR BAR DRINKS -->
           ${item.serving_ru ? `
             <div class="serving-block">
-              <div class="serving-title">☕️ Servirovka va podacha:</div>
+              <div class="serving-title">☕️ ${I18n.t('servingLabel')}:</div>
               <div class="serving-desc">${escapeHtml(item.serving_ru)}</div>
             </div>
           ` : ''}
 
-          <!-- PILLS (Spicy, Meatless, Allergens) -->
           ${renderCardPills(item)}
 
           <div class="card-footer">
@@ -232,7 +221,7 @@ const MenuManager = (function() {
               <input type="checkbox" class="confirm-checkbox"
                      ${isConfirmed ? 'checked' : ''}
                      onchange="toggleItemConfirmation('${itemKey}', this.checked)">
-              <span>Tasdiqlandi</span>
+              <span>${I18n.t('confirmedCheckbox')}</span>
             </label>
           </div>
         </div>

@@ -61,8 +61,38 @@
   --touch-target-min: 44px;
   
   /* Layout Sizing */
-  --header-height: 60px;
+  --header-height: 64px;
   --bottom-nav-height: 68px;
+}
+
+/* DARK MODE PALETTE OVERRIDES */
+[data-theme="dark"] {
+  --color-primary: #D4A373;
+  --color-primary-dark: #1E1210;
+  --color-primary-light: #36201D;
+  --color-bg: #1A0F0D;
+  --color-surface: #261613;
+  --color-surface-variant: #36201D;
+  --color-accent: #E9C46A;
+  --color-accent-light: #F4A261;
+  --color-accent-muted: #52352E;
+  
+  --color-text-primary: #FAF4ED;
+  --color-text-secondary: #D4C3B7;
+  --color-text-muted: #A38F83;
+  --color-text-on-primary: #1E1210;
+  
+  --color-border: #4A2E2B;
+  --color-border-subtle: #36201D;
+  
+  --color-danger-bg: #3E1919;
+  --color-success-bg: #1B3820;
+  --color-warning-bg: #3E2719;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-nav: 0 -4px 16px rgba(0, 0, 0, 0.4);
 }
 
 /* Base Reset & Lock Horizontal Scroll */
@@ -76,13 +106,14 @@
 html, body {
   width: 100%;
   height: 100%;
-  overflow-x: hidden; /* Prevents horizontal scroll on mobile */
+  overflow-x: hidden;
   background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* App Container Layout */
@@ -100,7 +131,7 @@ html, body {
 main.app-content {
   flex: 1;
   width: 100%;
-  max-width: 800px; /* Constrained for mobile/tablet optimization */
+  max-width: 800px;
   margin: 0 auto;
   padding-top: calc(var(--header-height) + 12px);
   padding-bottom: calc(var(--bottom-nav-height) + 24px);

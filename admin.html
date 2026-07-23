@@ -8,11 +8,18 @@
   
   <!-- PWA Manifest Link -->
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg">
 
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
+
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('safia_theme_v1') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 <body>
 
@@ -22,24 +29,30 @@
     <header class="app-header">
       <a href="index.html" class="btn-admin" title="Bosh sahifaga qaytish">
         <span>⬅️</span>
-        <span>Bosh sahifa</span>
+        <span id="txt-back-home">Bosh sahifa</span>
       </a>
-      <div class="brand-title" style="text-align: right;">
-        <h1 style="color: white;">⚙️ Admin Editor</h1>
-        <span>Menyu va Narxlar Tahrirchisi</span>
+      
+      <div class="header-actions">
+        <select id="lang-select" class="lang-select-dropdown" onchange="I18n.setLang(this.value); location.reload();">
+          <option value="uz">UZ 🇺🇿</option>
+          <option value="ru">RU 🇷🇺</option>
+          <option value="en">EN 🇬🇧</option>
+        </select>
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Theme Toggle" onclick="toggleAppTheme()">
+          🌙
+        </button>
       </div>
     </header>
 
     <!-- MAIN CONTENT CONTAINER -->
     <main class="app-content">
       <div id="admin-editor-container">
-        <div class="text-center" style="padding: 40px;">Menyu ma'lumotlari yuklanmoqda...</div>
+        <div class="text-center" style="padding: 40px;">Loading...</div>
       </div>
     </main>
 
   </div>
 
-  <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -48,9 +61,25 @@
           .catch(err => console.warn('Service Worker Registration Failed:', err));
       });
     }
+
+    function toggleAppTheme() {
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', current);
+      localStorage.setItem('safia_theme_v1', current);
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.innerText = current === 'dark' ? '☀️' : '🌙';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.innerText = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) langSelect.value = I18n.getLang();
+    });
   </script>
 
   <!-- JavaScript Modules -->
+  <script src="js/i18n.js"></script>
   <script src="js/data-loader.js"></script>
   <script src="js/admin.js"></script>
 

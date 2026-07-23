@@ -4,7 +4,7 @@
  * robust offline navigation fallback, and CacheFirst/StaleWhileRevalidate strategies.
  */
 
-const CACHE_NAME = 'safia-pwa-v2';
+const CACHE_NAME = 'safia-pwa-v3';
 
 const ASSETS = [
   '/',
@@ -14,6 +14,7 @@ const ASSETS = [
   'preview.html',
   'css/style.css',
   'css/components.css',
+  'js/i18n.js',
   'js/app.js',
   'js/admin.js',
   'js/data-loader.js',
@@ -85,7 +86,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // Robust Offline Navigation Fallback: Try match request, then root '/', then 'index.html'
           return caches.match(request)
             .then((res) => res || caches.match('/'))
             .then((res) => res || caches.match('index.html'));

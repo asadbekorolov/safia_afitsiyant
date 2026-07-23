@@ -10,31 +10,54 @@
   
   <!-- PWA Manifest Link -->
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg">
 
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
+
+  <!-- Immediate Theme Restoration Script -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('safia_theme_v1') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 <body>
 
   <div id="app-root">
 
-    <!-- HEADER SECTION -->
+    <!-- HEADER SECTION WITH CONTROLS -->
     <header class="app-header">
       <a href="index.html" class="header-brand">
         <div class="brand-logo">S</div>
         <div class="brand-title">
           <h1>Safia</h1>
-          <span>Standartlar & Menyu</span>
+          <span id="txt-brand-sub">Standartlar & Menyu</span>
         </div>
       </a>
 
-      <!-- Admin Button Requirement (min 44x44px touch target) -->
-      <a href="admin.html" class="btn-admin" title="Admin Sozlamalar">
-        <span>⚙️</span>
-        <span>Admin</span>
-      </a>
+      <!-- HEADER ACTIONS: LANGUAGE + THEME + ADMIN -->
+      <div class="header-actions">
+        <!-- 🌐 Language Selector -->
+        <select id="lang-select" class="lang-select-dropdown" onchange="I18n.setLang(this.value)">
+          <option value="uz">UZ 🇺🇿</option>
+          <option value="ru">RU 🇷🇺</option>
+          <option value="en">EN 🇬🇧</option>
+        </select>
+
+        <!-- 🌙 Theme Toggle Button -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Theme Toggle" onclick="toggleAppTheme()">
+          🌙
+        </button>
+
+        <!-- ⚙️ Admin Button -->
+        <a href="admin.html" class="btn-admin" title="Admin Sozlamalar">
+          <span>⚙️</span>
+          <span id="txt-admin-btn">Admin</span>
+        </a>
+      </div>
     </header>
 
     <!-- MAIN VIEWPORT CONTAINER (SPA SECTIONS) -->
@@ -61,33 +84,33 @@
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="kitchen" aria-label="Oshxona">
         <span class="nav-icon">🍽</span>
-        <span class="nav-label">Oshxona</span>
+        <span class="nav-label" id="tab-label-kitchen">Oshxona</span>
       </button>
 
       <button class="nav-item" data-tab="bar" aria-label="Bar">
         <span class="nav-icon">☕️</span>
-        <span class="nav-label">Bar</span>
+        <span class="nav-label" id="tab-label-bar">Bar</span>
       </button>
 
       <button class="nav-item" data-tab="standards" aria-label="Standartlar">
         <span class="nav-icon">📖</span>
-        <span class="nav-label">Standartlar</span>
+        <span class="nav-label" id="tab-label-standards">Standartlar</span>
       </button>
 
       <button class="nav-item" data-tab="cards" aria-label="Kartochkalar">
         <span class="nav-icon">🎴</span>
-        <span class="nav-label">Kartochkalar</span>
+        <span class="nav-label" id="tab-label-cards">Kartochkalar</span>
       </button>
 
       <button class="nav-item" data-tab="test" aria-label="Test">
         <span class="nav-icon">📝</span>
-        <span class="nav-label">Test</span>
+        <span class="nav-label" id="tab-label-test">Test</span>
       </button>
     </nav>
 
   </div>
 
-  <!-- PWA Service Worker Registration -->
+  <!-- PWA Service Worker Registration & Theme Handler -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -96,9 +119,24 @@
           .catch(err => console.warn('Service Worker Registration Failed:', err));
       });
     }
+
+    function toggleAppTheme() {
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', current);
+      localStorage.setItem('safia_theme_v1', current);
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.innerText = current === 'dark' ? '☀️' : '🌙';
+    }
+
+    // Set initial icon state
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.innerText = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+    });
   </script>
 
   <!-- JavaScript Application Logic Modules -->
+  <script src="js/i18n.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/data-loader.js"></script>
   <script src="js/menu.js"></script>

@@ -1,11 +1,11 @@
 /**
  * SAFIA ADMIN MENU EDITOR MODULE
  * Handles full inline editing of dishes and drinks, adding new items,
- * deleting items, search filtering, LocalStorage saving, JSON Export & Import.
+ * deleting items, search filtering, LocalStorage saving, JSON Export & Import, and i18n.
  */
 
 const AdminManager = (function() {
-  let activeTab = 'dishes'; // 'dishes' or 'drinks'
+  let activeTab = 'dishes';
   let adminDishes = [];
   let adminDrinks = [];
   let searchQuery = '';
@@ -40,44 +40,44 @@ const AdminManager = (function() {
           <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button class="btn btn-primary" onclick="AdminManager.saveToLocalStorage()">
-                <span>💾 Lokal Saqlash</span>
+                <span>${I18n.t('saveLocalBtn')}</span>
               </button>
               <button class="btn" onclick="AdminManager.exportJSON('dishes')">
-                <span>📥 dishes.json Yuklash</span>
+                <span>${I18n.t('exportDishesBtn')}</span>
               </button>
               <button class="btn" onclick="AdminManager.exportJSON('drinks')">
-                <span>📥 drinks.json Yuklash</span>
+                <span>${I18n.t('exportDrinksBtn')}</span>
               </button>
             </div>
 
             <div style="display: flex; gap: 8px; align-items: center;">
               <label class="btn" style="cursor: pointer;">
-                <span>📤 Tashqi JSON Yuklash</span>
+                <span>${I18n.t('importJsonBtn')}</span>
                 <input type="file" accept=".json" style="display: none;" onchange="AdminManager.importJSON(this)">
               </label>
               <button class="btn" style="color: var(--color-danger);" onclick="AdminManager.resetDefault()">
-                <span>🔄 Tiklash</span>
+                <span>${I18n.t('resetDefaultBtn')}</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- TAB SWITCHER (DISHES VS DRINKS) -->
+        <!-- TAB SWITCHER -->
         <div class="category-chips-scroll" style="margin-bottom: 14px;">
           <button class="chip-btn ${activeTab === 'dishes' ? 'active' : ''}"
                   onclick="AdminManager.switchTab('dishes')">
-            🍽 Oshxona Menyusi (${adminDishes.length})
+            🍽 ${I18n.t('tabKitchen')} (${adminDishes.length})
           </button>
           <button class="chip-btn ${activeTab === 'drinks' ? 'active' : ''}"
                   onclick="AdminManager.switchTab('drinks')">
-            ☕️ Bar Menyusi (${adminDrinks.length})
+            ☕️ ${I18n.t('tabBar')} (${adminDrinks.length})
           </button>
         </div>
 
         <!-- SEARCH BAR IN ADMIN -->
         <div class="search-input-group" style="margin-bottom: 16px;">
           <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Nom yoki ID bo'yicha tahrirlash uchun qidirish..."
+          <input type="text" placeholder="${I18n.t('searchAdminPlaceholder')}"
                  value="${escapeHtml(searchQuery)}"
                  oninput="AdminManager.handleSearch(this.value)">
         </div>
@@ -90,7 +90,7 @@ const AdminManager = (function() {
         <!-- ADD NEW ITEM BUTTON -->
         <div style="margin-top: 20px; text-align: center;">
           <button class="btn-card-action btn-know" style="min-width: 240px;" onclick="AdminManager.addNewItem()">
-            ➕ Yangi ${activeTab === 'dishes' ? 'Taom' : 'Ichimlik'} Qo'shish
+            ${I18n.t('addNewItemBtn')}
           </button>
         </div>
 
@@ -109,7 +109,7 @@ const AdminManager = (function() {
           <span class="badge badge-id">ID: #${String(item.id).padStart(3, '0')}</span>
           <button class="btn" style="color: var(--color-danger); padding: 4px 10px; font-size: 12px;"
                   onclick="AdminManager.deleteItem(${item.id})">
-            🗑 O'chirish
+            ${I18n.t('deleteBtn')}
           </button>
         </div>
 
@@ -139,21 +139,21 @@ const AdminManager = (function() {
         </div>
 
         <div>
-          <label style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">TARKIBI (RU):</label>
+          <label style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">${I18n.t('ingredientsLabel')} (RU):</label>
           <textarea class="select-control" style="width: 100%; min-height: 60px; font-family: inherit; font-size: 13px;"
                     onchange="AdminManager.updateField(${item.id}, 'ingredients_ru', this.value)">${escapeHtml(item.ingredients_ru || '')}</textarea>
         </div>
 
         ${!isDish ? `
           <div>
-            <label style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">SERVIROVKA VA PODACHA (BAR):</label>
+            <label style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">${I18n.t('servingLabel')} (BAR):</label>
             <textarea class="select-control" style="width: 100%; min-height: 50px; font-family: inherit; font-size: 13px;"
                       onchange="AdminManager.updateField(${item.id}, 'serving_ru', this.value)">${escapeHtml(item.serving_ru || '')}</textarea>
           </div>
         ` : ''}
 
         <div>
-          <label style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">RASM MANZILI (URL / Asset path):</label>
+          <label style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">RASM MANZILI (URL):</label>
           <input type="text" class="select-control" style="width: 100%;"
                  value="${escapeHtml(item.image || '')}"
                  onchange="AdminManager.updateField(${item.id}, 'image', this.value)">
@@ -229,7 +229,7 @@ const AdminManager = (function() {
     saveToLocalStorage() {
       DataLoader.saveCustomDishes(adminDishes);
       DataLoader.saveCustomDrinks(adminDrinks);
-      alert("✅ O'zgarishlar brauzer xotirasiga saqlandi! Endi bosh sahifada (index.html) yangi narxlar va ma'lumotlar darhol ko'rinadi.");
+      alert("✅ O'zgarishlar brauzer xotirasiga saqlandi!");
     },
 
     exportJSON(type) {
@@ -266,7 +266,7 @@ const AdminManager = (function() {
             alert(`✅ ${file.name} muvaffaqiyatli yuklandi va saqlandi!`);
             render();
           } else {
-            alert("⚠️ Yaroqsiz JSON fayli format! Massiv (Array) bo'lishi kerak.");
+            alert("⚠️ Yaroqsiz JSON fayli format!");
           }
         } catch (err) {
           alert("❌ JSON o'qishda xatolik: " + err.message);
@@ -276,7 +276,7 @@ const AdminManager = (function() {
     },
 
     resetDefault() {
-      if (confirm("Haqiqatdan ham barcha o'zgartirishlarni bekor qilib, dastlabki holatga qaytarmoqchimisiz?")) {
+      if (confirm("Haqiqatdan ham barcha o'zgartirishlarni bekor qilmoqchimisiz?")) {
         DataLoader.resetCustomData();
         location.reload();
       }
