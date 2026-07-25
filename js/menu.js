@@ -1,7 +1,6 @@
 /**
  * SAFIA MENU MANAGER MODULE
- * Handles category chips, real-time search, allergen filtering,
- * card rendering with lazy-loading, serving_ru display, empty states, and i18n.
+ * Dynamic 3-language rendering for dish names, ingredients, categories, and serving rules.
  */
 
 const MenuManager = (function() {
@@ -52,8 +51,8 @@ const MenuManager = (function() {
     const def = ALLERGEN_DEFINITIONS.find(a => a.id === allergenId);
     if (!def) return false;
 
-    const nameText = (item.name_ru || '').toLowerCase();
-    const ingText = (item.ingredients_ru || '').toLowerCase();
+    const nameText = (I18n.getField(item, 'name') || '').toLowerCase();
+    const ingText = (I18n.getField(item, 'ingredients') || '').toLowerCase();
     const allergenArr = Array.isArray(item.allergens) ? item.allergens.map(a => a.toLowerCase()) : [];
 
     return def.keywords.some(kw => 
@@ -91,7 +90,7 @@ const MenuManager = (function() {
           ${categories.map(cat => `
             <button class="chip-btn ${selectedCategory === cat ? 'active' : ''}"
                     onclick="MenuManager.selectCategory('${type}', '${escapeHtml(cat)}')">
-              ${escapeHtml(cat)}
+              ${escapeHtml(I18n.translate(cat))}
             </button>
           `).join('')}
         </div>
@@ -139,8 +138,8 @@ const MenuManager = (function() {
       }
 
       if (query) {
-        const nameMatch = (item.name_ru || '').toLowerCase().includes(query);
-        const ingMatch = (item.ingredients_ru || '').toLowerCase().includes(query);
+        const nameMatch = I18n.getField(item, 'name').toLowerCase().includes(query);
+        const ingMatch = I18n.getField(item, 'ingredients').toLowerCase().includes(query);
         const idMatch = String(item.id).includes(query);
         if (!nameMatch && !ingMatch && !idMatch) {
           return false;
@@ -179,13 +178,18 @@ const MenuManager = (function() {
     const isError = AppState.imageErrorSet.has(itemKey);
     const formattedPrice = item.price_uah ? `${item.price_uah.toLocaleString('ru-RU')} so'm` : '';
 
+    const name = I18n.getField(item, 'name');
+    const ingredients = I18n.getField(item, 'ingredients');
+    const serving = I18n.getField(item, 'serving');
+    const category = I18n.translate(item.category || item.group || '');
+
     return `
       <div class="food-card ${isConfirmed ? 'is-confirmed' : ''} ${isError ? 'has-img-error' : ''}" id="card-${itemKey}">
         <div class="card-img-wrap ${isError ? 'img-failed' : ''}">
-          <img src="${item.image}" alt="${escapeHtml(item.name_ru)}"
+          <img src="${item.image}" alt="${escapeHtml(name)}"
                loading="lazy"
                onerror="handleCardImgError(this, '${itemKey}')"
-               onclick="openImageModal('${item.image}', '${escapeHtml(item.name_ru)}')">
+               onclick="openImageModal('${item.image}', '${escapeHtml(name)}')">
           <div class="img-error-msg">
             <span>⚠️</span>
             <span>Rasm topilmadi</span>
@@ -196,21 +200,21 @@ const MenuManager = (function() {
           <div class="card-top">
             <div class="card-badges">
               <span class="badge badge-id">#${String(item.id).padStart(3, '0')}</span>
-              <span class="badge badge-cat">${escapeHtml(item.category || item.group || '')}</span>
+              <span class="badge badge-cat">${escapeHtml(category)}</span>
               ${formattedPrice ? `<span class="badge badge-price">${formattedPrice}</span>` : ''}
             </div>
           </div>
           
-          <div class="card-title">${escapeHtml(item.name_ru)}</div>
+          <div class="card-title">${escapeHtml(name)}</div>
           
           <div class="card-text">
-            <strong>${I18n.t('ingredientsLabel')}:</strong> ${escapeHtml(item.ingredients_ru || '')}
+            <strong>${I18n.t('ingredientsLabel')}:</strong> ${escapeHtml(ingredients)}
           </div>
 
-          ${item.serving_ru ? `
+          ${serving ? `
             <div class="serving-block">
               <div class="serving-title">☕️ ${I18n.t('servingLabel')}:</div>
-              <div class="serving-desc">${escapeHtml(item.serving_ru)}</div>
+              <div class="serving-desc">${escapeHtml(serving)}</div>
             </div>
           ` : ''}
 
@@ -236,7 +240,7 @@ const MenuManager = (function() {
     
     if (item.allergens && Array.isArray(item.allergens)) {
       item.allergens.forEach(a => {
-        html += `<span class="pill pill-allergen">⚠️ ${escapeHtml(a)}</span>`;
+        html += `<span class="pill pill-allergen">⚠️ ${escapeHtml(I18n.translate(a))}</span>`;
       });
     }
     html += '</div>';

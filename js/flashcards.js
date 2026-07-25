@@ -1,11 +1,11 @@
 /**
  * SAFIA FLASHCARDS GAMIFIED TRAINER MODULE
  * Features 3D card flip animation, 2 modes (Oshxona & Bar),
- * progress tracking via StorageManager, and i18n support.
+ * progress tracking via StorageManager, and dynamic 3-language support.
  */
 
 const FlashcardManager = (function() {
-  let currentMode = 'kitchen'; // 'kitchen' or 'bar'
+  let currentMode = 'kitchen';
   let currentIndex = 0;
   let activeDeck = [];
   let isFlipped = false;
@@ -50,11 +50,11 @@ const FlashcardManager = (function() {
         <div class="category-chips-scroll" style="justify-content: center; margin-bottom: 14px;">
           <button class="chip-btn ${currentMode === 'kitchen' ? 'active' : ''}"
                   onclick="FlashcardManager.switchMode('kitchen')">
-            🍽 ${I18n.t('tabKitchen')} (Rasm → Nom & Tarkib)
+            🍽 ${I18n.t('tabKitchen')}
           </button>
           <button class="chip-btn ${currentMode === 'bar' ? 'active' : ''}"
                   onclick="FlashcardManager.switchMode('bar')">
-            ☕️ ${I18n.t('tabBar')} (Nom → Tarkib & Servirovka)
+            ☕️ ${I18n.t('tabBar')}
           </button>
         </div>
 
@@ -94,14 +94,17 @@ const FlashcardManager = (function() {
 
   function renderKitchenCardFace(item) {
     const formattedPrice = item.price_uah ? `${item.price_uah.toLocaleString('ru-RU')} so'm` : '';
+    const name = I18n.getField(item, 'name');
+    const ingredients = I18n.getField(item, 'ingredients');
+    const category = I18n.translate(item.category || 'Oshxona');
 
     return `
       <!-- FRONT FACE -->
       <div class="flashcard-face flashcard-front">
         <div class="badge badge-cat" style="position: absolute; top: 12px; left: 12px;">
-          ${escapeHtml(item.category || 'Oshxona')}
+          ${escapeHtml(category)}
         </div>
-        <img src="${item.image}" alt="${escapeHtml(item.name_ru)}" class="flashcard-img"
+        <img src="${item.image}" alt="${escapeHtml(name)}" class="flashcard-img"
              onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'180\' height=\'180\'><rect width=\'100%\' height=\'100%\' fill=\'%23fee2e2\'/><text x=\'50%\' y=\'50%\' font-size=\'16\' text-anchor=\'middle\' fill=\'%23dc2626\'>No Image</text></svg>'">
         <div style="font-size: 13px; color: var(--color-text-muted); margin-top: 4px;">
           ${I18n.t('flashcardSub')}
@@ -114,13 +117,13 @@ const FlashcardManager = (function() {
           <span class="badge badge-id">#${String(item.id).padStart(3, '0')}</span>
           ${formattedPrice ? `<span class="badge badge-price">${formattedPrice}</span>` : ''}
         </div>
-        <h3 style="font-size: 17px; color: var(--color-primary); margin-bottom: 8px;">${escapeHtml(item.name_ru)}</h3>
+        <h3 style="font-size: 17px; color: var(--color-primary); margin-bottom: 8px;">${escapeHtml(name)}</h3>
         <div style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px;">
-          <strong>${I18n.t('ingredientsLabel')}:</strong> ${escapeHtml(item.ingredients_ru)}
+          <strong>${I18n.t('ingredientsLabel')}:</strong> ${escapeHtml(ingredients)}
         </div>
         ${item.allergens && item.allergens.length ? `
           <div style="font-size: 11.5px; color: var(--color-danger); margin-top: auto;">
-            <strong>⚠️ Allergenlar:</strong> ${item.allergens.join(', ')}
+            <strong>⚠️ Allergenlar:</strong> ${item.allergens.map(a => I18n.translate(a)).join(', ')}
           </div>
         ` : ''}
       </div>
@@ -128,11 +131,16 @@ const FlashcardManager = (function() {
   }
 
   function renderBarCardFace(item) {
+    const name = I18n.getField(item, 'name');
+    const ingredients = I18n.getField(item, 'ingredients');
+    const serving = I18n.getField(item, 'serving');
+    const group = I18n.translate(item.group || 'Bar');
+
     return `
       <!-- FRONT FACE -->
       <div class="flashcard-face flashcard-front" style="justify-content: center;">
-        <span class="badge badge-cat" style="margin-bottom: 12px;">${escapeHtml(item.group || 'Bar')}</span>
-        <h3 style="font-size: 20px; color: var(--color-primary); margin-bottom: 8px;">${escapeHtml(item.name_ru)}</h3>
+        <span class="badge badge-cat" style="margin-bottom: 12px;">${escapeHtml(group)}</span>
+        <h3 style="font-size: 20px; color: var(--color-primary); margin-bottom: 8px;">${escapeHtml(name)}</h3>
         <p style="font-size: 12px; color: var(--color-text-muted);">
           ${I18n.t('flashcardSub')}
         </p>
@@ -141,12 +149,12 @@ const FlashcardManager = (function() {
       <!-- BACK FACE -->
       <div class="flashcard-face flashcard-back">
         <h4 style="color: var(--color-primary); margin-bottom: 4px;">${I18n.t('ingredientsLabel')}:</h4>
-        <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 10px;">${escapeHtml(item.ingredients_ru)}</p>
+        <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 10px;">${escapeHtml(ingredients)}</p>
         
-        ${item.serving_ru ? `
+        ${serving ? `
           <div class="serving-block" style="width: 100%; margin-bottom: 8px;">
             <div class="serving-title">☕️ ${I18n.t('servingLabel')}:</div>
-            <div class="serving-desc">${escapeHtml(item.serving_ru)}</div>
+            <div class="serving-desc">${escapeHtml(serving)}</div>
           </div>
         ` : ''}
       </div>

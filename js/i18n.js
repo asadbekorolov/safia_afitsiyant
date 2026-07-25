@@ -1,13 +1,14 @@
 /**
- * SAFIA MULTI-LANGUAGE (i18n) MODULE
+ * SAFIA MULTI-LANGUAGE (i18n) MODULE WITH DYNAMIC DICTIONARY TRANSLATIONS
  * Supports UZ (O'zbekcha), RU (Ruscha), EN (English).
- * Manages translation dictionaries and localStorage persistence.
+ * Dynamically translates dish names, ingredients, categories, bar serving rules, and standards.
  */
 
 const I18n = (function() {
   const LANG_KEY = 'safia_lang_v1';
   let currentLang = localStorage.getItem(LANG_KEY) || 'uz';
 
+  // Interface Dictionary
   const DICTIONARY = {
     uz: {
       brandSub: "Standartlar & Menyu",
@@ -181,6 +182,85 @@ const I18n = (function() {
     }
   };
 
+  // Dynamic Glossary for Food Names, Ingredients, Categories & Servings
+  const FOOD_GLOSSARY = [
+    { ru: "Завтраки", uz: "Nonushtalar", en: "Breakfasts" },
+    { ru: "Вторые блюда", uz: "Ikkinchi taomlar", en: "Main Courses" },
+    { ru: "Салаты", uz: "Salatlar", en: "Salads" },
+    { ru: "Супы", uz: "Suplar va krem-suplar", en: "Soups & Cream Soups" },
+    { ru: "Десерты", uz: "Shirinliklar", en: "Desserts" },
+    { ru: "Авторские чаи", uz: "Mualliflik Choylari", en: "Signature Teas" },
+    { ru: "Кофейные напитки", uz: "Kofe Ichimliklari", en: "Coffee Drinks" },
+    { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" },
+    { ru: "Смузи и Фреши", uz: "Smuzi va Yangi Sharbatlar", en: "Smoothies & Fresh Juices" },
+
+    { ru: "яйца", uz: "tuxum", en: "eggs" },
+    { ru: "яйцо", uz: "tuxum", en: "egg" },
+    { ru: "лосось", uz: "losos baliq", en: "salmon" },
+    { ru: "авокадо", uz: "avokado", en: "avocado" },
+    { ru: "хлеб", uz: "tost noni", en: "bread" },
+    { ru: "масло", uz: "sariyog'", en: "butter" },
+    { ru: "зелень", uz: "yangi ko'katlar", en: "herbs" },
+    { ru: "бекон", uz: "bekon", en: "bacon" },
+    { ru: "томаты", uz: "pomidorlar", en: "tomatoes" },
+    { ru: "томат", uz: "pomidor", en: "tomato" },
+    { ru: "соус", uz: "sous", en: "sauce" },
+    { ru: "овсяные хлопья", uz: "suli yormasi", en: "oatmeal" },
+    { ru: "молоко", uz: "sut", en: "milk" },
+    { ru: "ягоды", uz: "mavsumiy mevalar", en: "berries" },
+    { ru: "мёд", uz: "tabiiy asal", en: "honey" },
+    { ru: "творог", uz: "tvorog pishlog'i", en: "cottage cheese" },
+    { ru: "сметана", uz: "smetana", en: "sour cream" },
+    { ru: "джем", uz: "djem", en: "jam" },
+    { ru: "сахар", uz: "shakar", en: "sugar" },
+    { ru: "куриное филе", uz: "tovuq filesi", en: "chicken fillet" },
+    { ru: "курица", uz: "tovuq go'shti", en: "chicken" },
+    { ru: "говядина", uz: "mol go'shti", en: "beef" },
+    { ru: "ветчина", uz: "vetchina", en: "ham" },
+    { ru: "сыр", uz: "pishloq", en: "cheese" },
+    { ru: "креветки", uz: "krevetkalar", en: "shrimps" },
+    { ru: "тунец", uz: "tunez baliq", en: "tuna" },
+    { ru: "грибы", uz: "qo'ziqorinlar", en: "mushrooms" },
+    { ru: "сливки", uz: "qaymoq", en: "cream" },
+    { ru: "картофель", uz: "kartoshka", en: "potatoes" },
+    { ru: "огурцы", uz: "bodring", en: "cucumber" },
+    { ru: "лук", uz: "piyoz", en: "onion" },
+    { ru: "чеснок", uz: "sarimsoqpiyoz", en: "garlic" },
+    { ru: "перец", uz: "murch", en: "pepper" },
+    { ru: "соль", uz: "tuz", en: "salt" },
+    { ru: "паста", uz: "pasta makaroni", en: "pasta" },
+    { ru: "лимон", uz: "limon", en: "lemon" },
+    { ru: "мята", uz: "yalpiz", en: "mint" },
+    { ru: "лед", uz: "muz bo'laklari", en: "ice cubes" },
+    { ru: "сироп", uz: "sirop", en: "syrup" },
+    { ru: "кофе", uz: "kofe", en: "coffee" },
+    { ru: "чай", uz: "choy", en: "tea" },
+    { ru: "апельсин", uz: "apelsin", en: "orange" },
+    { ru: "клубника", uz: "qulupnay", en: "strawberry" },
+    { ru: "персик", uz: "shaftoli", en: "peach" },
+    { ru: "маракуйя", uz: "marakuyya", en: "passion fruit" },
+    { ru: "подается в", uz: "beriladi:", en: "served in:" },
+    { ru: "подается с", uz: "birga beriladi:", en: "served with:" },
+    { ru: "бокал", uz: "bokal stakan", en: "glass" },
+    { ru: "кружка", uz: "chashka kruzka", en: "mug" },
+    { ru: "трубочка", uz: "naycha (trubochka)", en: "straw" },
+    { ru: "украшается", uz: "bezatiladi:", en: "garnished with:" }
+  ];
+
+  function translateText(text) {
+    if (!text || typeof text !== 'string') return text || '';
+    if (currentLang === 'ru') return text;
+
+    let res = text;
+    FOOD_GLOSSARY.forEach(item => {
+      const reg = new RegExp(item.ru, 'gi');
+      const replacement = item[currentLang] || item.ru;
+      res = res.replace(reg, replacement);
+    });
+
+    return res;
+  }
+
   return {
     getLang() {
       return currentLang;
@@ -197,6 +277,19 @@ const I18n = (function() {
     t(key) {
       const dict = DICTIONARY[currentLang] || DICTIONARY.uz;
       return dict[key] || key;
+    },
+
+    getField(item, fieldPrefix) {
+      if (!item) return '';
+      const key = `${fieldPrefix}_${currentLang}`;
+      if (item[key]) return item[key];
+
+      const fallbackRu = item[`${fieldPrefix}_ru`] || item[fieldPrefix] || '';
+      return translateText(fallbackRu);
+    },
+
+    translate(text) {
+      return translateText(text);
     }
   };
 })();
