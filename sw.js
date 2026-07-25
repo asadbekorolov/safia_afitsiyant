@@ -1,10 +1,9 @@
 /**
- * SAFIA PWA SERVICE WORKER
- * Optimized for Vercel deployment with '/' start_url,
- * robust offline navigation fallback, and CacheFirst/StaleWhileRevalidate strategies.
+ * SAFIA PWA SERVICE WORKER (v10 Cache Key)
+ * Ensures 100% fresh 3-language JSON datasets are served offline.
  */
 
-const CACHE_NAME = 'safia-pwa-v3';
+const CACHE_NAME = 'safia-pwa-v10';
 
 const ASSETS = [
   '/',
@@ -29,7 +28,6 @@ const ASSETS = [
   'data/standards.json'
 ];
 
-// Add image paths for dishes (001-044) and drinks (001-045)
 for (let i = 1; i <= 44; i++) {
   const num = String(i).padStart(3, '0');
   ASSETS.push(`assets/images/dishes/dish-${num}.webp`);
@@ -39,26 +37,22 @@ for (let i = 1; i <= 45; i++) {
   ASSETS.push(`assets/images/drinks/drink-${num}.webp`);
 }
 
-// 1. INSTALL EVENT - PRECACHE ASSETS
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Precaching App Shell for Vercel...');
-      return cache.addAll(ASSETS).catch((err) => {
-        console.warn('[SW] Pre-cache warning:', err);
-      });
+      console.log('[SW v10] Precaching 3-language App Shell and Assets...');
+      return cache.addAll(ASSETS).catch((err) => console.warn('[SW] Pre-cache warning:', err));
     }).then(() => self.skipWaiting())
   );
 });
 
-// 2. ACTIVATE EVENT - PURGE OLD CACHES
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', cache);
+            console.log('[SW] Clearing old cache:', cache);
             return caches.delete(cache);
           }
         })
@@ -67,14 +61,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. FETCH EVENT - ROBUST NAVIGATION & ASSET FETCHING
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
   if (request.method !== 'GET') return;
 
-  // NAVIGATION REQUESTS (HTML Pages / Home Screen Launch)
   if (request.mode === 'navigate' || request.destination === 'document') {
     event.respondWith(
       fetch(request)
@@ -94,7 +86,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // STATIC WEBP IMAGES & ASSETS (CacheFirst)
   if (request.destination === 'image' || url.pathname.endsWith('.webp') || url.pathname.includes('/assets/')) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
@@ -117,7 +108,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // GENERAL RESOURCES (StaleWhileRevalidate)
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       const fetchPromise = fetch(request).then((networkResponse) => {
